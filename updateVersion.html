@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>echo检测更新</title>
+  <style>
+    a {
+      color: #1890ff;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #app>* {
+      user-select: none;
+    }
+  </style>
+
+<body>
+  <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+  <div id="app">
+    <el-card class="box-card">
+      <div slot="header" class="clearfix">
+        <span style="font-weight: bold;">更新版本{{Version}}</span>
+        <el-button style="float: right; padding: 3px 0;" type="text" @click="goDownLoadEcho">前往下载</el-button>
+      </div>
+      <div v-for="(value,index) in UpdateContent" style="font-size: 14px;">
+        {{value}}
+      </div>
+    </el-card>
+  </div>
+
+  <script src="js/vue.js"></script>
+  <script src="element-ui/lib/index.js"></script>
+  <script src="js/axios.min.js"></script>
+  <script>
+    const { ipcRenderer } = require('electron');
+    const { ipcMain } = require('electron');
+    let { Config } = require("./config/config")
+    const { machineIdSync } = require("node-machine-id")
+    new Vue({
+      el: "#app",
+      data() {
+        return {
+          Version: "V",
+          UpdateContent: ['无'],
+          downloadUrl: "",
+          Code: {
+            PC_LOGIN_SUCCESS: 20010,
+            PC_LOGIN_FAIL: 20011
+          },
+          userName: '',
+          passWord: ''
+        }
+      },
+
+      methods: {
+        goDownLoadEcho() {
+          ipcRenderer.send('go-download', this.downloadUrl);
+        },
+        goRegister() {
+          ipcRenderer.send('go-register');
+        },
+        loginEcho() {
+          if (this.userName.trim() == "") {
+            this.$message({
+              showClose: true,
+              message: '用户名不能为空',
+              type: 'warning'
+            });
+            return;
+          }
+          if (this.passWord.trim() == "") {
+            this.$message({
+              showClose: true,
+              message: '密码不能为空',
+              type: 'warning'
+            });
+            return;
+          }
+          //登录的时候一并传送机器码
+          axios.post(Config.JavanowHost + '/seerAccount/login/checkDevice', {
+            pcWinDeviceId: machineIdSync(true),
+            userName: this.userName,
+            passWord: this.passWord,
+          }).then(resp => {
+            resp = resp.data
+            if (resp.code == this.Code.PC_LOGIN_SUCCESS) {
+              //进行通信
+              ipcRenderer.send('login-success-add-device', resp.data);
+              this.$message({
+                showClose: true,
+                message: resp.msg,
+                type: 'success'
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: resp.msg,
+                type: 'error'
+              });
+            }
+          })
+        }
+      },
+
+
+      mounted() {
+        const timerId = setInterval(() => {
+          try {
+            this.Version = "V" + updateVersion.echoVersion
+            this.UpdateContent = updateVersion.updateLogs.split("\n")
+            this.downloadUrl = updateVersion.downloadUrl
+            console.log(this.Version)
+          } catch (error) {
+            clearInterval(timerId)
+          }
+        }, 100)
+      }
+    })
+  </script>
+</body>
+
+</html>
