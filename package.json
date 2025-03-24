@@ -4,7 +4,8 @@
   "description": "A minimal Electron application",
   "main": "main.js",
    "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build":"C:\\Users\\Administrator\\AppData\\Roaming\\npm\\node .\\node_modules\\electron-builder\\cli.js"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "author": "GitHub",

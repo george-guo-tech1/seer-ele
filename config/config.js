@@ -5,7 +5,7 @@ var Config = {
     VueDevHost: "http://localhost:7000",
     VueProHost: "http://43.139.23.120",
     VuenowHost: "",
-    Version:"3.4.46",
+    Version:"3.7.09",
 }
 
 

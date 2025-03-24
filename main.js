@@ -453,7 +453,7 @@ async function createWindow() {
       if (_0x758002.code == Code.VERSION_CHECK_SUCCESS) {
         console.log('当前版本为最新版本')
       } else {
-        newWinUpdate('var updateVersion = ' + JSON.stringify(_0x758002.data))
+        // newWinUpdate('var updateVersion = ' + JSON.stringify(_0x758002.data))
       }
     })
     .catch((_0x34f291) => {
@@ -473,22 +473,22 @@ async function createWindow() {
         if (_0x4e7a95 == _0x1dcb0b) {
           console.log('版本匹配!进行读取')
           now_content = fs
-            .readFileSync(path.join(__dirname, './gameSrc/nowContent.js'))
+            .readFileSync(path.join(__dirname, './gameSrc/nowConten1.js'))
             .toString()
         } else {
           console.log('版本不匹配!进行更新')
           
             now_content = fs
-             .readFileSync(path.join(__dirname, './gameSrc/nowContent.js'))
+             .readFileSync(path.join(__dirname, './gameSrc/nowConten1.js'))
              .toString()
         
         }
-        now_content = decryptAES(
-          now_content,
-          'zht2942332601zhtzht2942332601zht',
-          'zht2942332601zht',
-        )
-        mainWindow.webContents.executeJavaScript(now_content.toString())
+        // now_content = decryptAES(
+        //   now_content,
+        //   'zht2942332601zhtzht2942332601zht',
+        //   'zht2942332601zht',
+        // )
+        mainWindow.webContents.executeJavaScript('//@ sourceURL=game.js\n'+now_content.toString())
       })
       .catch((_0x2b01b9) => {
         newWin('请尝试重启登录器! ' + _0x2b01b9)
